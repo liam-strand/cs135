@@ -1,5 +1,6 @@
 """
 hw0_split.py
+Liam Strand
 
 Summary
 -------

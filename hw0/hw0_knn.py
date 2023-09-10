@@ -1,5 +1,6 @@
 """
 K Nearest Neighbors
+Liam Strand
 
 >>> data_NF = np.asarray([
 ...     [1, 0],
