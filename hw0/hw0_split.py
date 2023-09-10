@@ -1,4 +1,4 @@
-'''
+"""
 hw0_split.py
 
 Summary
@@ -42,12 +42,12 @@ References
 ----------
 For more about RandomState, see:
 https://stackoverflow.com/questions/28064634/random-state-pseudo-random-numberin-scikit-learn
-'''
+"""
 
 import numpy as np
 
 def split_into_train_and_test(x_all_LF, frac_test=0.5, random_state=None):
-    ''' Divide provided array into train and test sets along first dimension
+    """ Divide provided array into train and test sets along first dimension
 
     User can provide random number generator object to ensure reproducibility.
 
@@ -77,12 +77,12 @@ def split_into_train_and_test(x_all_LF, frac_test=0.5, random_state=None):
     --------------
     This function should be side-effect free. Provided input array x_all_LF
     should not change at all (not be shuffled, etc.)
-    '''
+    """
     if random_state is None:
         random_state = np.random
     elif isinstance(random_state, int):
         random_state = np.random.RandomState(int(random_state))
-    if not hasattr(random_state, 'rand'):
+    if not hasattr(random_state, "rand"):
         raise ValueError("Not a valid random number generator")
 
     # Random shuffle of row ids corresponding to all L provided examples
@@ -94,9 +94,7 @@ def split_into_train_and_test(x_all_LF, frac_test=0.5, random_state=None):
     # Keep remaining M examples as training
     M = L - N
 
-    # TODO use the first M row ids in shuffled_ids_L to make x_train_MF
-    # TODO use the remaining N row ids to make x_test_NF
-    # HINT Use integer indexing
+    x_train_MF = x_all_LF[shuffled_ids_L[:M]]
+    x_test_NF = x_all_LF[shuffled_ids_L[M:]]
 
-    # TODO return both x_train_MF and x_test_NF
-    return None, None
+    return x_train_MF, x_test_NF

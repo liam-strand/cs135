@@ -1,4 +1,4 @@
-'''
+"""
 K Nearest Neighbors
 
 >>> data_NF = np.asarray([
@@ -43,11 +43,11 @@ array([[ 1.,  0.],
 array([[ 0., -1.],
        [ 1.,  0.],
        [-1.,  0.]])
-'''
+"""
 import numpy as np
 
 def calc_k_nearest_neighbors(data_NF, query_QF, K=1):
-    ''' Compute and return k-nearest neighbors under Euclidean distance
+    """ Compute and return k-nearest neighbors under Euclidean distance
 
     Args
     ----
@@ -64,7 +64,25 @@ def calc_k_nearest_neighbors(data_NF, query_QF, K=1):
         Entry q,k is feature vector of k-th nearest neighbor of the q-th query
         If two vectors are equally close, then we break ties by taking the one
         appearing first in row order in the original data_NF array
-    '''
+    """
 
-    # TODO fixme
-    return None
+    # Extract dimensions
+    N, F = data_NF.shape
+    Q, _ = query_QF.shape
+
+    def process_query(q):
+        # Euclidian distance is the norm of the vector difference
+        eucl_dist = lambda a: np.linalg.norm(q - a)
+
+        # Calculate the distances from all examples to query
+        dists_N = np.array(list(map(eucl_dist, data_NF)))
+        ranking_N = np.argsort(dists_N, kind="stable")
+
+        # Return the K examples nearest to the query
+        return data_NF[ranking_N][:K]
+
+    # Process all the queries and collect them into an array of the correct type
+    neighb_QKF = np.array(list(map(process_query, query_QF)), dtype="float64")
+
+    return neighb_QKF
+
