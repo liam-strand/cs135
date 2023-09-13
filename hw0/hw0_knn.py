@@ -77,6 +77,7 @@ def calc_k_nearest_neighbors(data_NF, query_QF, K=1):
 
         # Calculate the distances from all examples to query
         dists_N = np.array(list(map(eucl_dist, data_NF)))
+        # faster: np.sum(np.square(data_NF - q), axis=1) 
         ranking_N = np.argsort(dists_N, kind="stable")
 
         # Return the K examples nearest to the query
