@@ -1,4 +1,6 @@
 import numpy as np
+from sys import stderr
+from pprint import pprint 
 
 from performance_metrics import calc_root_mean_squared_error
 
@@ -58,13 +60,32 @@ def train_models_and_calc_scores_for_n_fold_cv(
     train_error_per_fold = np.zeros(n_folds, dtype=np.float32)
     test_error_per_fold = np.zeros(n_folds, dtype=np.float32)
 
-    # TODO define the folds here by calling your function
-    # e.g. ... = make_train_and_test_row_ids_for_n_fold_cv(...)
+    N, F = x_NF.shape
+    folds = make_train_and_test_row_ids_for_n_fold_cv(N, n_folds, random_state)
 
-    # TODO loop over folds and compute the train and test error
-    # for the provided estimator
+    train_error_per_fold = list()
+    test_error_per_fold = list()
 
-    return train_error_per_fold, test_error_per_fold
+    for train_ids, test_ids in zip(*folds):
+        assert train_ids[0].dtype.kind == "i"
+        assert test_ids[0].dtype.kind == "i"
+        x_train = x_NF[train_ids]
+        x_test  = x_NF[test_ids]
+        y_train = y_N[train_ids]
+        y_test  = y_N[test_ids]
+
+        estimator.fit(x_train, y_train)
+
+        y_train_hat = estimator.predict(x_train)
+        y_test_hat  = estimator.predict(x_test)
+
+        train_error = calc_root_mean_squared_error(y_train_hat, y_train)
+        test_error  = calc_root_mean_squared_error(y_test_hat, y_test)
+
+        train_error_per_fold.append(train_error)
+        test_error_per_fold.append(test_error)
+
+    return np.asarray(train_error_per_fold, dtype=np.float64), np.asarray(test_error_per_fold, dtype=np.float64)
 
 
 def make_train_and_test_row_ids_for_n_fold_cv(
@@ -135,12 +156,17 @@ def make_train_and_test_row_ids_for_n_fold_cv(
         # Handle case where we pass "seed" for a PRNG as an integer
         random_state = np.random.RandomState(int(random_state))
 
-    # TODO obtain a shuffled order of the n_examples
-
-    train_ids_per_fold = list()
-    test_ids_per_fold = list()
+    shuffled_ids = random_state.permutation(np.arange(n_examples, dtype=np.int64))
     
-    # TODO establish the row ids that belong to each fold's
-    # train subset and test subset
+    test_ids_per_fold = list()
+    train_ids_per_fold = list()
+
+    partitioned_ids = np.array_split(shuffled_ids, n_folds)
+
+    for i in range(len(partitioned_ids)):
+        test = partitioned_ids[i]
+        train = np.setdiff1d(shuffled_ids, test, assume_unique=True)
+        test_ids_per_fold.append(test)
+        train_ids_per_fold.append(train)
 
     return train_ids_per_fold, test_ids_per_fold

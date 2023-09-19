@@ -75,10 +75,12 @@ class LeastSquaresLinearRegressor(object):
                 \sum_{n=1}^N (y_n - b - \sum_f x_{nf} w_f)^2
         '''      
         N, F = x_NF.shape
-        
-        # Hint: Use np.linalg.solve
-        # Using np.linalg.inv may cause issues (see day03 lab) 
-        pass # TODO fixme
+        G = F + 1
+        xtilde_NG = np.hstack([x_NF, np.ones((N, 1))])
+        xTx_GG = np.dot(xtilde_NG.T, xtilde_NG)
+        theta_G = np.linalg.solve(xTx_GG, np.dot(xtilde_NG.T, y_N))
+        self.w_F = theta_G[:-1]
+        self.b = theta_G[-1]
 
 
     def predict(self, x_MF):
@@ -95,8 +97,12 @@ class LeastSquaresLinearRegressor(object):
         yhat_M : 1D array, size M
             Each value is the predicted scalar for one example
         '''
-        # TODO FIX ME
-        return np.asarray([0.0])
+        M, F = x_MF.shape
+        G = F + 1
+        xtilde_MG = np.hstack([x_MF, np.ones((M, 1))])
+        theta_G = np.append(self.w_F, self.b)
+
+        return np.dot(xtilde_MG, theta_G)
 
 
 
