@@ -1,4 +1,4 @@
-'''
+"""
 calc_binary_metrics
 
 Provides implementation of common metrics for assessing a binary classifier's
@@ -6,12 +6,13 @@ hard decisions against true binary labels, including:
 * accuracy
 * true positive rate and true negative rate (TPR and TNR)
 * positive predictive value and negative predictive value (PPV and NPV)
-'''
+"""
 
 import numpy as np
+import sklearn.metrics
 
 def calc_TP_TN_FP_FN(ytrue_N, yhat_N):
-    ''' Count the four possible states of true and predicted binary values.
+    """ Count the four possible states of true and predicted binary values.
     
     Args
     ----
@@ -52,21 +53,25 @@ def calc_TP_TN_FP_FN(ytrue_N, yhat_N):
     2
     >>> np.allclose(TP + TN + FP + FN, N)
     True
-    '''
+    """
     # Cast input to integer just to be sure we're getting what's expected
     ytrue_N = np.asarray(ytrue_N, dtype=np.int32)
     yhat_N = np.asarray(yhat_N, dtype=np.int32)
     
-    # TODO fix by calculating the number of true pos, true neg, etc.
-    TP  = 0
-    TN = 0
-    FP = 0
-    FN = 0
-    return None  # TODO fix me
+    if (ytrue_N.shape == (0,)):
+        return 0, 0, 0, 0
+
+    confusion = sklearn.metrics.confusion_matrix(ytrue_N, yhat_N)
+
+    tp = confusion[1,1]
+    tn = confusion[0,0]
+    fp = confusion[0,1]
+    fn = confusion[1,0]
+    return tp, tn, fp, fn
 
 
 def calc_ACC(ytrue_N, yhat_N):
-    ''' Compute the accuracy of provided predicted binary values.
+    """ Compute the accuracy of provided predicted binary values.
     
     Args
     ----
@@ -93,17 +98,19 @@ def calc_ACC(ytrue_N, yhat_N):
     >>> acc = calc_ACC(ytrue_N, yhat_N)
     >>> print("%.3f" % acc)
     0.625
-    '''
-    # TODO compute accuracy
-    # You should *use* your calc_TP_TN_FP_FN function from above
-    # Hint: make sure denominator will never be exactly zero
-    # by adding a small value like 1e-10
-    return None  # TODO fix me
+    """
+    
+    tp, tn, fp, fn = calc_TP_TN_FP_FN(ytrue_N, yhat_N)
+
+    correct = tp + tn
+    total = tp + tn + fn + fp + 1e-10
+
+    return correct / total
 
 
 
 def calc_TPR(ytrue_N, yhat_N):
-    ''' Compute the true positive rate of provided predicted binary values.
+    """ Compute the true positive rate of provided predicted binary values.
 
     Also known as the recall.
 
@@ -137,16 +144,16 @@ def calc_TPR(ytrue_N, yhat_N):
     >>> empty_val = calc_TPR([], [])
     >>> print("%.3f" % empty_val)
     0.000
-    '''
-    # TODO compute TPR
-    # You should *use* your calc_TP_TN_FP_FN function from above
-    # Hint: make sure denominator will never be exactly zero
-    # by adding a small value like 1e-10
-    return None  # TODO fix me
+    """
 
+    tp, _, _, fn = calc_TP_TN_FP_FN(ytrue_N, yhat_N)
+
+    all_positive = tp + fn + 1e-10
+
+    return tp / all_positive
 
 def calc_PPV(ytrue_N, yhat_N):
-    ''' Compute positive predictive value of provided predicted binary values.
+    """ Compute positive predictive value of provided predicted binary values.
 
     Also known as the precision.
     
@@ -180,10 +187,10 @@ def calc_PPV(ytrue_N, yhat_N):
     >>> empty_val = calc_PPV([], [])
     >>> print("%.3f" % empty_val)
     0.000
-    '''
-    # TODO compute PPV
-    # You should *use* your calc_TP_TN_FP_FN function from above
-    # Hint: make sure denominator will never be exactly zero
-    # by adding a small value like 1e-10
-    return None  # TODO fix me
+    """
+    tp, _, fp, _ = calc_TP_TN_FP_FN(ytrue_N, yhat_N)
+
+    all_reported_positive = tp + fp + 1e-10
+
+    return tp / all_reported_positive
 
