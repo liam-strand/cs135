@@ -9,7 +9,6 @@ hard decisions against true binary labels, including:
 """
 
 import numpy as np
-import sklearn.metrics
 
 def calc_TP_TN_FP_FN(ytrue_N, yhat_N):
     """ Count the four possible states of true and predicted binary values.
@@ -57,16 +56,26 @@ def calc_TP_TN_FP_FN(ytrue_N, yhat_N):
     # Cast input to integer just to be sure we're getting what's expected
     ytrue_N = np.asarray(ytrue_N, dtype=np.int32)
     yhat_N = np.asarray(yhat_N, dtype=np.int32)
+
+    (N,) = ytrue_N.shape
     
-    if (ytrue_N.shape == (0,)):
-        return 0, 0, 0, 0
+    tp = 0
+    tn = 0
+    fp = 0
+    fn = 0
 
-    confusion = sklearn.metrics.confusion_matrix(ytrue_N, yhat_N)
+    for i in range(N):
+        if ytrue_N[i] == 1:
+            if yhat_N[i] == 1:
+                tp += 1
+            else:
+                fn += 1
+        else:
+            if yhat_N[i] == 1:
+                fp += 1
+            else:
+                tn += 1
 
-    tp = confusion[1,1]
-    tn = confusion[0,0]
-    fp = confusion[0,1]
-    fn = confusion[1,0]
     return tp, tn, fp, fn
 
 

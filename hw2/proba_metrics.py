@@ -96,10 +96,13 @@ def calc_mean_binary_cross_entropy_from_probas(ytrue_N, yproba1_N):
     yproba1_N = np.asarray(yproba1_N, dtype=np.float64)           # dont touch
     yproba1_N = np.maximum(1e-14, np.minimum(1-1e-14, yproba1_N)) # dont touch
 
-    # be sure to handle empty input lists properly
-    bce_prob = 0.0  # TODO fix me
+    if N == 0:
+        return 0.0
 
-    return None  # TODO fix me
+    log_pns_N = np.log2(yproba1_N)
+    log_anti_pns_N = np.log2((yproba1_N * -1) + 1) * ((ytrue_N * -1) + 1)
+
+    return np.average((log_pns_N * (ytrue_N * -1)) - log_anti_pns_N)
 
 
 def calc_mean_binary_cross_entropy_from_scores(ytrue_N, scores_N):
@@ -196,11 +199,14 @@ def calc_mean_binary_cross_entropy_from_scores(ytrue_N, scores_N):
     # Cast logit scores to float
     scores_N = np.asarray(scores_N, dtype=np.float64)  # dont touch
 
-    flipped_scores_N = np.zeros(N)  # TODO fix me: flip(y_n) s_n
+    if N == 0:
+        return 0.0
 
-    scores_and_zeros_N2 = np.zeros((N, 2))  # TODO fix me: [0, flipped_scores_N]. Hint: stack two arrays of shape (N,1)
+    flipped_scores_N = yflippedsign_N * scores_N
+
+    scores_and_zeros_N2 = np.stack([np.zeros(N), flipped_scores_N])
 
     # Be sure to use scipy_logsumexp from scipy to handle 2D arrays and handle empty input lists properly
-    bce_score = 0.0  # TODO fix me
+    bce_score = np.average(scipy_logsumexp(scores_and_zeros_N2, axis=0))
 
-    return None  # TODO fix me
+    return bce_score / np.log(2)
