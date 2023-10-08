@@ -1,0 +1,3 @@
+[submodule "myprojectA"]
+	path = myprojectA
+	url = git@github.com:liam-strand/cs135-projA.git
