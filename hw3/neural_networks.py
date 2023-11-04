@@ -47,7 +47,7 @@ def predict_0_hidden_layer(x_NF, w_arr, b_arr, output_activation):
     See doctest_neural_nets.py
 
     """
-    return None  # TODO: fixme
+    return output_activation(np.squeeze(np.dot(x_NF, w_arr) + b_arr))
 
 
 def predict_n_hidden_layer(
@@ -107,11 +107,23 @@ def predict_n_hidden_layer(
         b_arr = b_list[layer_id]
 
         # Perform the linear operation: X · w + b
-        out_arr = None  # TODO: fixme
+        out_arr = np.dot(out_arr, w_arr) + b_arr
 
         # Perform the non-linear activation of current layer
-        out_arr = None  # TODO: fixme
+        if layer_id < (n_layers - 1):
+            out_arr = hidden_activation(out_arr)
+        else:
+            out_arr = output_activation(out_arr)
 
     out_arr = np.squeeze(out_arr)  # reduce unnecessary dimension for single output
 
     return out_arr
+
+if __name__ == "__main__":
+    y = predict_0_hidden_layer(np.array([[1.0, 2.0, 3.0]]), np.array([2.0, 3.0, 4.0]), 0.5, identity)
+    y = predict_0_hidden_layer(
+        np.array([[1.0, 2.0, 3.0], [1.0, 2.0, 3.0], [1.0, 2.0, 3.0], [1.0, 2.0, 3.0]]), 
+        np.array([[2.0, 3.0], [0.2, 0.3], [0.4, 0.5]]), 
+        np.array([0.3, 0.2]), 
+        softmax,
+    )
