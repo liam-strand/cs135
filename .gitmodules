@@ -1,3 +1,6 @@
 [submodule "myprojectA"]
 	path = myprojectA
 	url = git@github.com:liam-strand/cs135-projA.git
+[submodule "myprojectB"]
+	path = myprojectB
+	url = git@github.com:liam-strand/cs135-projB.git
