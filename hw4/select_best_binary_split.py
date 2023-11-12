@@ -114,14 +114,31 @@ def select_best_binary_split(x_NF, y_N, MIN_SAMPLES_LEAF=1):
             cost_F[f] = np.inf
             continue
 
-        # TODO Compute total cost at each possible threshold
-        # Your goal is *correctness*, don't prioritize speed or efficiency yet.
-        # Hint: You may need several lines of code, maybe a for loop.
-        # Hint 2: look below at how we assemble the left and right child 
-        left_yhat_V = np.zeros(V) # TODO fixme
-        right_yhat_V = np.ones(V) # TODO fixme
-        left_cost_V = np.zeros(V) # TODO fixme
-        right_cost_V = np.ones(V) # TODO fixme
+        x_feat_N = x_NF[:,f]
+
+        left_yhat_V  = np.zeros(V)
+        right_yhat_V = np.zeros(V)
+        left_cost_V  = np.zeros(V)
+        right_cost_V = np.zeros(V)
+
+        for i, v in enumerate(possib_xthresh_V):
+
+            left_idx  = np.nonzero(x_feat_N <  v)[0]
+            right_idx = np.nonzero(x_feat_N >= v)[0]
+
+            left_yhat  = np.average(y_N[left_idx])
+            right_yhat = np.average(y_N[right_idx])
+
+
+            left_cost  = np.sum(np.square(y_N[left_idx]  - left_yhat))
+            right_cost = np.sum(np.square(y_N[right_idx] - right_yhat))
+
+            left_yhat_V[i]  = left_yhat
+            right_yhat_V[i] = right_yhat
+
+            left_cost_V[i]  = left_cost
+            right_cost_V[i] = right_cost
+
         total_cost_V = left_cost_V + right_cost_V
 
         # Check if there is any split that improves our cost or predictions.
@@ -133,13 +150,12 @@ def select_best_binary_split(x_NF, y_N, MIN_SAMPLES_LEAF=1):
             cost_F[f] = np.inf
             continue
         
-        # TODO pick out the split candidate that has best cost
-        chosen_v_id = -1 # TODO fixme
+        chosen_v_id = np.argmin(total_cost_V)
         cost_F[f] = total_cost_V[chosen_v_id]
         thresh_val_F[f] = possib_xthresh_V[chosen_v_id]
 
     # Determine single best feature to use
-    best_feat_id = np.argmin(cost_F)
+    best_feat_id = int(np.argmin(cost_F))
     best_thresh_val = thresh_val_F[best_feat_id]
     
     if not np.isfinite(cost_F[best_feat_id]):
