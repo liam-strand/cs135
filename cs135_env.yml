@@ -18,3 +18,6 @@ dependencies:
   #- conda-forge::openpyxl=3.1 # to read .xlsx
   ## Machine Learning
   - scikit-learn=1.2
+  - pytorch
+  - torchvision
+  - torchaudio
