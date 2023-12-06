@@ -41,7 +41,7 @@ array([[ 0. , -3. , -6. ],
 
 import numpy as np
 
-def calc_linear_kernel(x_QF, x_train_NF=None):
+def calc_linear_kernel(x_QF, x_train_NF):
     ''' Evaluate linear kernel matrix between two datasets.
 
     Will compute the kernel function for all possible pairs of feature vectors,
@@ -70,9 +70,8 @@ def calc_linear_kernel(x_QF, x_train_NF=None):
     N, F2 = x_train_NF.shape
     assert F == F2
     
-    k_QN = np.zeros((Q, N))
-    # TODO compute linear kernel between rows of x_QF and rows of x_train_NF
-
+    k_QN = np.dot(x_QF, x_train_NF.T)
+    
     # Ensure the kernel matrix positive definite
     # By adding a small positive to the diagonal
     M = np.minimum(Q, N)

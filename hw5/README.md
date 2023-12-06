@@ -6,13 +6,13 @@ Instructions: <https://www.cs.tufts.edu/cs/135/2023f/hw5.html>
 
 #### Problem 3: Coding tasks
 
-* [ ] Write `linear_kernel.py`
-* [ ] Write `sqexp_kernel.py`
+* [x] Write `linear_kernel.py`
+* [x] Write `sqexp_kernel.py`
 
 #### Problem 4-7: Analysis tasks
 
-* [ ] Do all tasks in the notebook `hw5.ipynb` 
-* [ ] Prepare report (figures/tables/answers) following the [HW5 instructions page](https://www.cs.tufts.edu/cs/135/2023f/hw5.html)
+* [x] Do all tasks in the notebook `hw5.ipynb` 
+* [x] Prepare report (figures/tables/answers) following the [HW5 instructions page](https://www.cs.tufts.edu/cs/135/2023f/hw5.html)
 
 #### Files that you do NOT need to touch
 

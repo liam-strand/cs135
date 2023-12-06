@@ -37,7 +37,7 @@ array([[0.007, 0.   , 0.   ],
 
 import numpy as np
 
-def calc_sqexp_kernel(x_QF, x_train_NF=None, length_scale=1.0):
+def calc_sqexp_kernel(x_QF, x_train_NF, length_scale=1.0):
     ''' Evaluate squared-exponential kernel matrix between two datasets.
 
     Will compute the kernel function for all possible pairs of feature vectors,
@@ -66,9 +66,10 @@ def calc_sqexp_kernel(x_QF, x_train_NF=None, length_scale=1.0):
     N, F2 = x_train_NF.shape
     assert F == F2
 
-    k_QN = np.zeros((Q, N))
-    # TODO compute kernel between rows of x_QF and rows of x_train_NF
+    gamma = length_scale ** -2
 
+    k_QN = np.exp(-gamma * np.sum(np.square(x_QF[:, np.newaxis, :] - x_train_NF[np.newaxis, :, :]), axis=2))
+    
     # Ensure the kernel matrix positive definite
     # By adding a small positive to the diagonal
     M = np.minimum(Q, N)
